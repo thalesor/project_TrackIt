@@ -23,7 +23,8 @@ const Historico = () =>
     {
         axios.get(`https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits/history/daily`,config)
         .then(response => {
-        setCalendarData(response.data);
+            if(response.data.length)
+            setCalendarData(response.data);
         })
     }
     
@@ -74,7 +75,10 @@ const Historico = () =>
             <h1>Histórico</h1>
         </HeaderBox>
         <ContentBox>
-            {calendarData && <Calendar formatDay={format} className='calendar'></Calendar>}
+            {calendarData
+             ? <Calendar formatDay={format} className='calendar'></Calendar>
+            : <h1>Em breve você poderá ver o histórico dos seus hábitos aqui!</h1>
+        }
         </ContentBox>
     </Container>
     

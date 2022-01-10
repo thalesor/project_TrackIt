@@ -127,7 +127,6 @@ const Habitos = () =>
     const onFormReset = () =>
     {
         setIsFormVisible(false);
-        setFormData(formInitialState);
     }
 
     const onFormSubmit = (e) =>
@@ -147,6 +146,7 @@ const Habitos = () =>
             .then(response => {
                 setIsFormActive(true);
                 onFormReset();
+                setFormData(formInitialState);
                 getHabits();
             }).catch(() =>
             {

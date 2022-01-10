@@ -101,7 +101,7 @@ function App() {
       }></Route>
       <Route path="/historico" element={
         <>
-        <UserContext.Provider value={{userData, displayMessage}}>
+        <UserContext.Provider value={{userData, displayMessage, logout}}>
         <Header/>
         <Historico />
         <Footer />

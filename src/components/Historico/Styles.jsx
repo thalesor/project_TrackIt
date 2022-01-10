@@ -39,8 +39,10 @@ const ContentBox = style.div`
         border-radius: 10px;
     }
 
-    .jesus {
-        background-color: red;
+    h1 {
+        font-size: 17.976px;
+        color: #666666;
+        font-weight: 400;
     }
 `;
 
