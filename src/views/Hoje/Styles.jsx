@@ -34,8 +34,15 @@ const ContentBox = style.div`
     display: flex;
     flex-direction: column;
     gap: 10px;
-    margin-top: 28px;
     width: 100%;
+`;
+
+const PlaceHolderBox = style.div`
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+    margin-top: 100px;
 `;
 
 const HabitoBox = style.div`
@@ -43,9 +50,9 @@ const HabitoBox = style.div`
     background: #FFFFFF;
     border-radius: 5px;
     padding: 14px;
-    height: 94px;
     display: flex;
     justify-content: space-between;
+    align-items: center;
 `;
 
 const HabitoGroup = style.div`
@@ -116,5 +123,6 @@ export {
     SpanGroup,
     Span,
     DoneButton,
-    Beach
+    Beach,
+    PlaceHolderBox
 }

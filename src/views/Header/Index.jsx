@@ -1,18 +1,16 @@
-import React, { useContext } from 'react';
-import UserContext from "../../contexts/UserContext";
+import React from 'react';
 import door from '../../assets/door.png';
-
+import useGlobal from '../../hooks/useGlobal';
 import { HeaderBox, HeaderGroup, ExitButton } from './Styles';
 
 const Header = () =>
 {
-  const { userData, logout } = useContext(UserContext);
-
+  const { auth, logoff } = useGlobal();
     return <HeaderBox>
         <h1>TrackIt</h1>
         <HeaderGroup>
-          <img src={userData.image}></img>
-          <ExitButton src={door} onClick={()=> logout()}></ExitButton>
+          <img src={auth.image}></img>
+          <ExitButton src={door} onClick={()=> logoff()}></ExitButton>
         </HeaderGroup>
     </HeaderBox>
     

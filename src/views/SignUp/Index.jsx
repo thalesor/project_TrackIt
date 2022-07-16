@@ -1,16 +1,15 @@
 import React, { useState, useContext } from 'react';
-import axios from 'axios';
 import logo from '../../assets/logo.png';
 import Loader from "react-loader-spinner";
 import { useNavigate } from 'react-router-dom';
-import UserContext from "../../contexts/UserContext";
-
+import useGlobal from '../../hooks/useGlobal';
 import { Container, Form, Input, Button, LinkTag } from './Styles';
+import { signUp } from '../../services/api';
 
 const SignUp = () =>
 {
     const [isFormActive, setIsFormActive] = useState(true);
-    const { displayMessage } = useContext(UserContext);
+    const { displayMessage, displayToast } = useGlobal();
     const [formData, setFormData] = useState({
         email: '',
         name: '',
@@ -19,28 +18,21 @@ const SignUp = () =>
     })
     let navigate = useNavigate();
 
-
-    const onSignUp = (e) =>
+    async function onSignUp(e)
     {
         e.preventDefault();
         setIsFormActive(false);
-        axios.post(`https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/auth/sign-up`, 
-        formData)
-        .then(response => {
-            navigate("/"); 
-        }).catch((error) => 
+        try
         {
-        const messageConfig = 
+            const result = await signUp(formData);
+            displayToast('success', `Sucesso!
+            Você foi cadastrado`);
+            navigate('/');
+        }
+        catch(error)
         {
-            showCancel : false,
-            message: 'Reveja os dados e tente novamente',
-            type: 'error',
-            confirmBtnText: 'Ok',
-            title: 'Erro ao cadastrar'
-        };
-        displayMessage(messageConfig);
-            setIsFormActive(true);
-        })
+            displayMessage('error', 'Falha', error.response.data);
+        }
     }
 
     const onInputChange = (e) => 

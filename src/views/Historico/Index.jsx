@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
-import UserContext from "../../contexts/UserContext";
+import useGlobal from '../../hooks/useGlobal';
 import dayjs from 'dayjs';
 import 'dayjs/locale/pt-br';
 import 'react-calendar/dist/Calendar.css';
@@ -11,11 +11,11 @@ import Calendar from 'react-calendar';
 const Historico = () =>
 {
     dayjs.locale('pt-br');
-    const { userData, displayMessage } = useContext(UserContext);
+    const { auth, displayMessage } = useGlobal();
     const [calendarData, setCalendarData] = useState(null);
     const config = {
         headers: {
-            "Authorization": `Bearer ${userData.token}`
+            "Authorization": `Bearer ${auth.token}`
         }
     }
 

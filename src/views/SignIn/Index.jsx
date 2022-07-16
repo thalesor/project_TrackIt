@@ -1,15 +1,21 @@
-import React, { useState, useEffect, useContext } from 'react';
-import axios from 'axios';
+import React, { useState, useEffect } from 'react';
 import logo from '../../assets/logo.png';
 import Loader from "react-loader-spinner";
 import { useNavigate } from 'react-router-dom';
-import UserContext from "../../contexts/UserContext";
+import { displayMessage, displayToast } from '../Message';
+import useGlobal from '../../hooks/useGlobal';
+import {    
+    Container,
+    Form,
+    Input,
+    Button,
+    LinkTag 
+} from './Styles';
 
-import { Container, Form, Input, Button, LinkTag } from './Styles';
+import * as api from '../../services/api';
 
 const SignIn = () =>
 {
-    const { setUserData, displayMessage } = useContext(UserContext);
     let navigate = useNavigate();
     
     const [isFormActive, setIsFormActive] = useState(true);
@@ -18,41 +24,31 @@ const SignIn = () =>
         password: ''
     })
 
+    const { auth, login } = useGlobal();
+
     useEffect(() => {
-        if(localStorage.getItem("userData"))
+        if(auth && auth.token)
         {
             navigate('/hoje');
         }
     }, [])
 
-const onSignIn = (e) =>
+async function onSignIn(e)
 {
     e.preventDefault();
     setIsFormActive(false);
-    axios.post(`https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/auth/login`, 
-    formData)
-    .then(response => {
-        const userObj = {
-            image: response.data.image,
-            name: response.data.name,
-            token: response.data.token
-        }
-        localStorage.setItem("userData", JSON.stringify(userObj));
-        setUserData(userObj);
-        navigate("/hoje"); 
-    }).catch((error) => 
+    try
     {
-        const messageConfig = 
-        {
-            showCancel : false,
-            message: 'Não existe usuário cadastrado para os dados digitados',
-            type: 'error',
-            confirmBtnText: 'Ok',
-            title: 'Erro de autenticação'
-        };
-        displayMessage(messageConfig);
+        const promise = await api.login(formData);
+        login(promise.data);
+        displayToast('success', `Seja bem-vindo ${promise.data.name}`);
+        navigate('/hoje'); 
+    }
+    catch(err)
+    {
+        displayMessage("error", "Falha", err.response.data.message);
         setIsFormActive(true);
-    })
+    }
 }
 
 const onInputChange = (e) => 

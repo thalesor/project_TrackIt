@@ -1,53 +1,69 @@
-import React, { useState, useEffect, useContext } from 'react';
-import axios from 'axios';
-import UserContext from "../../contexts/UserContext";
+import React, { useState, useEffect} from 'react';
 import checked from '../../assets/checked.png';
 import beach from '../../assets/beach.jpg';
 import dayjs from 'dayjs';
 import 'dayjs/locale/pt-br';
-
-import { Container, HeaderBox, DoneInfo, ContentBox, HabitoBox, HabitoGroup, SpanGroup, Span, DoneButton, Beach }
+import { displayMessage } from '../Message';
+import useGlobal from '../../hooks/useGlobal';
+import * as api from '../../services/api';
+import { Placeholder } from 'rsuite';
+import 'rsuite/dist/rsuite.min.css';
+import { Container, PlaceHolderBox, HeaderBox, DoneInfo, ContentBox, HabitoBox, HabitoGroup, SpanGroup, Span, DoneButton, Beach }
 from './Styles';
 
 const Hoje = () =>
 {
     dayjs.locale('pt-br');
-    const { userData, todayProgressState, getTodayProgress } = useContext(UserContext);
+        const { auth, todayProgressState, getTodayProgress} = useGlobal();
+        const [pageLoaded, setPageLoaded] = useState(false);
     const [todayHabitsList, setTodayHabitsList] = useState(null);
-    const config = {
-        headers: {
-            "Authorization": `Bearer ${userData.token}`
+
+    async function toggleHabit(id, status)
+    {
+        try {
+            const instruction = status ? 'uncheck' : 'check';
+            await api.updateHabitStatus(auth.token, id, instruction);
+            getTodayHabitsList(auth.token);
+        } catch (err) {
+            displayMessage("error", "Falha", err.response.data.message);
         }
     }
-
-    const toggleHabit = (id, status) =>
-    {
-        const instruction = status ? 'uncheck' : 'check';
-        axios.post(`https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits/${id}/${instruction}`, null, config)
-        .then(response => {
-            getTodayHabitsList();
-        })
-    }
-
       
-    const getTodayHabitsList = () =>
+    async function getTodayHabitsList(token)
     {
-        axios.get(`https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits/today`,config)
-        .then(response => {
-        setTodayHabitsList(response.data);
-        })
+        try {
+            const promise = await api.getTodayHabitsData(token);
+            setTodayHabitsList(promise.data);
+            setPageLoaded(true);
+        }
+        catch(err)
+        {
+            displayMessage("error", "Falha", err.response.data.message);
+        }
     }
     
     useEffect(() => {
-        getTodayHabitsList();
+        getTodayHabitsList(auth.token);
     }, [])
 
-    useEffect(() => {
-        getTodayProgress();
+    useEffect(async() => {
+        if (auth && auth.token) {
+            const promise = await api.getTodayHabitsData(auth.token);
+            getTodayProgress(promise.data);
+          }
     }, [todayHabitsList])
 
     const today = dayjs().format('dddd, DD/MM'); 
-    return <Container>
+    const { Paragraph } = Placeholder;
+
+    const placeHolderItems = [];
+    for(let i = 0; i < 6; i++)
+    placeHolderItems.push(
+    <HabitoBox>
+        <Paragraph rows={3} graph="image" active />
+    </HabitoBox>);
+
+    return pageLoaded ? (<Container>
         <HeaderBox>
             <h1>{today}</h1>
             {
@@ -77,6 +93,13 @@ const Hoje = () =>
       </Beach>
     }
         </ContentBox>
+    </Container>
+    )
+    :
+    <Container>
+        <PlaceHolderBox>
+           {placeHolderItems} 
+        </PlaceHolderBox>
     </Container>
     
 }

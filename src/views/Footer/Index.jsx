@@ -1,13 +1,12 @@
-import React, { useContext } from 'react';
-import UserContext from "../../contexts/UserContext";
-import { CircularProgressbar, CircularProgressbarWithChildren, buildStyles } from "react-circular-progressbar";
+import React from 'react';
+import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
-
+import useGlobal from '../../hooks/useGlobal';
 import { FooterBox, FooterInnerBox, ProgressContainer, LinkTag } from './Styles';
 
 const Footer = () =>
 {
-  const { todayProgressState } = useContext(UserContext);
+  const { todayProgressState } = useGlobal();
 
     return <FooterBox>
       <FooterInnerBox>
